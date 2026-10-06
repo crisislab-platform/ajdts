@@ -15,7 +15,6 @@ URLs that open in a new tab. Only the issues listed in issues.py are served
 from here.
 """
 
-import datetime
 import html
 import os
 import posixpath
@@ -25,7 +24,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from issues import ISSUES  # noqa: E402
+from issues import ISSUES, UPDATED  # noqa: E402
 
 ORIGINAL = os.path.join(HERE, "original")
 NEW_ISSUE = os.path.join(HERE, "new-issue")
@@ -144,7 +143,6 @@ def notice(depth):
 FOOTER_DOMAIN = re.compile(
     r'<span><a href="(?:\.\./)*index\.html">trauma\.massey\.ac\.nz</a></span>')
 FOOTER_DATE = re.compile(r'(<!-- #BeginDate format:Sw1 -->).*?(<!-- #EndDate -->)', re.S)
-BUILT = datetime.date.today().strftime("%-d %B, %Y")
 
 
 def fix_footer(markup):
@@ -152,7 +150,7 @@ def fix_footer(markup):
         '<span><a href="%s/">trauma.massey.ac.nz</a></span>'
         '<span>Hosted by <a href="%s">CRISiSLab</a></span>' % (ARCHIVE, CRISISLAB),
         markup, count=1)
-    markup = FOOTER_DATE.sub(lambda m: m.group(1) + BUILT + m.group(2), markup, count=1)
+    markup = FOOTER_DATE.sub(lambda m: m.group(1) + UPDATED + m.group(2), markup, count=1)
     return markup
 
 
@@ -469,6 +467,9 @@ def main():
 
     open(os.path.join(SITE, "crisislab.css"), "w", encoding="utf-8").write(OVERRIDE_CSS)
     open(os.path.join(SITE, "robots.txt"), "w", encoding="utf-8").write(ROBOTS)
+    # GitHub Pages runs Jekyll unless told otherwise, which would skip any file
+    # or directory beginning with an underscore.
+    open(os.path.join(SITE, ".nojekyll"), "w", encoding="utf-8").write("")
 
     files = sum(len(f) for _, _, f in os.walk(SITE))
     print("built site/ — %d files, %d page(s) rewritten" % (files, len(pages)))

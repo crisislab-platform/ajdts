@@ -7,6 +7,11 @@ ISSUES (newest first) and re-run build.py. The first entry becomes the
 archived Massey volumes.
 """
 
+# Stamped into the footer of every page. Bump it when you publish a change;
+# leaving it to the build clock would make the output non-reproducible and the
+# CI freshness check would fail the day after any commit.
+UPDATED = "6 October, 2026"
+
 ISSUES = [
     {
         "dir": "29-1",

@@ -47,8 +47,11 @@ python3 -m http.server 8899 --directory site
 2. Add an entry at the **top** of `ISSUES` in `issues.py` (newest first). The
    first entry becomes the Current Issue; the ones below it are listed as
    previous issues.
-3. `python3 build.py`
-4. Redeploy `site/`.
+3. Bump `UPDATED` in `issues.py` — it is the date stamped into every footer.
+   It is pinned rather than taken from the build clock so that rebuilds are
+   byte-for-byte reproducible, which is what lets CI check `site/` is current.
+4. `python3 build.py`
+5. Commit `site/` along with your changes and push.
 
 The outgoing current issue does not need moving by hand — it falls into the
 previous-issues list automatically.
@@ -77,6 +80,21 @@ Everything below is done by `build.py`, so it survives a rebuild:
   existed beside the pages referencing it.
 - **`crisislab.css`** — a small override layer. The original stylesheet is
   untouched.
+
+## Deployment
+
+Hosted on **GitHub Pages** from `crisislab-platform/ajdts`.
+`.github/workflows/pages.yml` publishes `site/` on every push to `main`, and
+first re-runs `build.py` to fail the build if `site/` was not regenerated after
+a source change.
+
+`site/` is committed rather than built fresh in CI on purpose: it makes the
+deployed bytes reviewable in a diff, and it means the site can be served from
+any static host by copying one folder.
+
+Nothing in the site is root-absolute, so it works under a subpath
+(`/ajdts/`) as well as at a domain root — useful if `ajdts.crisislab.org.nz`
+is CNAME'd to it later.
 
 ## Embedding in the Wix site
 
