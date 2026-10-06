@@ -98,28 +98,42 @@ is CNAME'd to it later.
 
 ## Embedding in the Wix site
 
-The site is a fixed 938px-wide layout, so the Wix page needs a content area at
-least that wide.
+Live at **https://crisislab-platform.github.io/ajdts/** and embedded in the Wix
+site on a page called **AJDTS Journal**, as an *Embed a site* (iframe)
+component:
 
-1. In the Wix Editor: **Add → Embed Code → Embed a Site (iFrame)**, set the URL
-   to wherever `site/` is deployed, and set the width to 940px.
-2. Because Wix HTML components are a fixed height and the Previous Issues page
-   is very tall, every page posts its height to the parent window. Velo is
-   enabled on this site, so the page code can resize the component to fit:
+| Setting | Value |
+|---|---|
+| URL | `https://crisislab-platform.github.io/ajdts/` |
+| Component size | 980 x 1163 px, at X 0, Y 0 |
+| Containing section | 980 x 1320 px |
+| Alt text | Australasian Journal of Disaster and Trauma Studies |
 
-```js
-// Wix page code
-$w.onReady(() => {
-  $w('#html1').onMessage((event) => {
-    if (event.data && event.data.ajdtsHeight) {
-      $w('#html1').height = Math.min(event.data.ajdtsHeight, 20000);
-    }
-  });
-});
-```
+Two things that are easy to get wrong when editing this:
 
-Replace `#html1` with the component's actual ID. Without this the embed still
-works — it just scrolls inside its own box.
+- **The section must stay taller than the component.** The section defaulted to
+  500px while the component was 1163px, and the site footer rendered on top of
+  the bottom of the embed. The 157px of slack is what keeps them apart.
+- **Clicking the embed in the editor selects the section, not the component** —
+  the iframe swallows the click. Select it via the *Layers* panel instead
+  (Section: Untitled -> HTML).
+
+### Why the height is fixed
+
+Every page posts its scroll height to the parent (`{ ajdtsHeight: ... }`, see
+`EMBED_JS` in build.py), so a Velo `onMessage` handler could resize the
+component to fit each page. That is deliberately **not** wired up: this is the
+classic Wix Editor, where elements are absolutely positioned and the page does
+not reflow when a component's height changes at runtime. Growing the component
+would slide it under the footer rather than push the footer down.
+
+So the embed is a fixed 1163px and taller pages scroll inside it. 1163px fits
+the journal's home page exactly, footer and all. The Current Issue page and the
+very long Previous Issues index scroll internally, which is normal behaviour for
+an embedded site.
+
+The postMessage is left in place because it costs nothing and becomes useful if
+the site ever moves to Wix Studio, where sections do reflow.
 
 ## Known issues
 
