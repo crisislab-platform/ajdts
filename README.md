@@ -118,6 +118,25 @@ Two things that are easy to get wrong when editing this:
   the iframe swallows the click. Select it via the *Layers* panel instead
   (Section: Untitled -> HTML).
 
+### PDF links download rather than open
+
+The Volume 29 links carry `download target="_blank" rel="noopener"`, so clicking
+one saves the file instead of rendering it in the browser's PDF viewer — which,
+inside the Wix embed, would otherwise display the paper in the iframe.
+
+GitHub Pages cannot send `Content-Disposition: attachment` (it supports no
+custom headers), so this is done client-side with the HTML `download`
+attribute. That attribute is only honoured for **same-origin** URLs, which is
+why it applies to the issues we host but is silently ignored on the links back
+to the Massey archive — those open in a new tab instead, which is the most that
+can be done for a file on someone else's server.
+
+`target="_blank"` is the fallback: if a sandboxed frame ever blocks the
+download, the PDF opens in its own tab rather than inside the embed.
+
+If a true `Content-Disposition` header is ever wanted, that means moving off
+GitHub Pages — Cloudflare Pages and Netlify both support a `_headers` file.
+
 ### Why the height is fixed
 
 Every page posts its scroll height to the parent (`{ ajdtsHeight: ... }`, see

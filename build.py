@@ -206,13 +206,23 @@ def add_chrome(markup, page):
 # page content for the issues we host
 # --------------------------------------------------------------------------
 
+# The PDFs we host should save to disk, not open in the browser's built-in
+# viewer — in the Wix embed that would otherwise render inside the iframe.
+# GitHub Pages cannot set Content-Disposition, but `download` does the same job
+# client-side and is honoured because these files are same-origin. target
+# _blank is the fallback: if a sandboxed frame blocks the download, the PDF
+# opens in its own tab instead of inside the embed.
+DOWNLOAD_ATTRS = ' download target="_blank" rel="noopener"'
+
+
 def paper_listing(issue, prefix):
     """Author/title/keyword listing, as used on the Current Issue page."""
     out = []
     for section in issue["sections"]:
         out.append('            <h4>%s</h4>' % section["heading"])
         for p in section["papers"]:
-            out.append('            <h5><a class="pdf" href="%s%s">%s</a></h5>' % (prefix, p["pdf"], p["title"]))
+            out.append('            <h5><a class="pdf" href="%s%s"%s>%s</a></h5>'
+                       % (prefix, p["pdf"], DOWNLOAD_ATTRS, p["title"]))
             out.append('            <p><em>%s</em></p>' % p["authors"])
             out.append('            <p><strong>Keywords: </strong>%s</p>' % p["keywords"])
     return "\n".join(out)
@@ -223,7 +233,8 @@ def paper_listing_with_abstracts(issue, prefix):
     for section in issue["sections"]:
         out.append('            <h4>%s</h4>' % section["heading"])
         for p in section["papers"]:
-            out.append('            <h5><a class="pdf" href="%s%s">%s</a></h5>' % (prefix, p["pdf"], p["title"]))
+            out.append('            <h5><a class="pdf" href="%s%s"%s>%s</a></h5>'
+                       % (prefix, p["pdf"], DOWNLOAD_ATTRS, p["title"]))
             out.append('            <p><em>%s</em></p>' % p["authors"])
             out.append('            <p><strong>Keywords: </strong>%s</p>' % p["keywords"])
             out.append('            <blockquote>')
@@ -234,11 +245,11 @@ def paper_listing_with_abstracts(issue, prefix):
 
 
 def downloads_block(issue, prefix):
-    lines = ['            <h5><a href="%s%s">%s</a> (complete issue, PDF)</h5>'
-             % (prefix, issue["full_pdf"], issue["label"])]
+    lines = ['            <h5><a href="%s%s"%s>%s</a> (complete issue, PDF)</h5>'
+             % (prefix, issue["full_pdf"], DOWNLOAD_ATTRS, issue["label"])]
     if issue.get("contents_pdf"):
-        lines.append('            <p><a href="%s%s">Contents page - %s</a></p>'
-                     % (prefix, issue["contents_pdf"], issue["label"]))
+        lines.append('            <p><a href="%s%s"%s>Contents page - %s</a></p>'
+                     % (prefix, issue["contents_pdf"], DOWNLOAD_ATTRS, issue["label"]))
     return "\n".join(lines)
 
 
