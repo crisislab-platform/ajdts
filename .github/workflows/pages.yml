@@ -33,11 +33,10 @@ jobs:
             exit 1
           fi
 
+      # Pages must already be switched on for the repo with Source = GitHub
+      # Actions (Settings -> Pages). Enabling it from here needs write-level
+      # workflow permissions, which this org does not grant by default.
       - uses: actions/configure-pages@v5
-        with:
-          # Turn Pages on via the API rather than requiring a trip through the
-          # repo settings UI. Needs the pages:write permission granted above.
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
