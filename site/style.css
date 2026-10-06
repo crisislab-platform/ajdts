@@ -1,0 +1,585 @@
+/* Design by Studio 7 Designs Inc under Creative Commons 3.1 */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	border: 0pt none;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 100%;
+	font-style: inherit;
+	font-weight: inherit;
+	margin: 0pt;
+	outline-color: invert;
+	outline-style: none;
+	outline-width: 0pt;
+	padding: 0pt;
+	vertical-align: baseline;
+	color: #4C4C4C;
+}
+
+ul, ol, dl, dd {
+	margin-left:0;
+	padding-left: 18px
+}
+
+dd {
+	font-size: 100%;
+	margin-bottom: .4em;	
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 0pt;
+}
+caption, th, td {
+	font-weight:normal;
+	text-align:left;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content:"";
+}
+blockquote, q {
+	quotes:"" "";
+}
+strong, b {
+	font-weight:bold;
+}
+em, i {
+	font-style: italic;
+}
+* {
+	margin-top: 0.4em;
+	margin-right: 0.4em;
+	margin-left: 0.4em;
+	margin-bottom: 0.4em;
+	padding: 0pt;
+}
+
+body {
+	background: url(images/background-ajdts.jpg) center top no-repeat;
+	font-size: 12px;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	background-color: #4C81AF;
+}
+
+a {
+	color: #0066cc;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #005AB2;
+	text-decoration: underline;
+}
+
+#wrapper {
+	width:938px;
+	margin:0 auto;
+}
+
+#content {
+	background:#FFF;
+	padding:13px 13px 7px 13px;
+	margin:120px 0 100px 0;
+	width:900px;
+}
+
+#header {
+	background:url(images/header_ajdts.png) left top repeat-x;
+	padding:15px 0 15px 13px;		
+}
+
+#header img.icon {
+	float:left;
+	margin:-15px 10px 0 -12px;
+}
+
+h1 {
+	font-size: 30px;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #004B8D;
+	line-height: 32px;
+}
+
+h1 a{
+	text-decoration:none;
+	color: #004B8D;
+}
+
+h1 a:hover{
+	text-decoration:none;
+	color: #005ab2;
+}
+
+h2 {
+	font-weight: normal;
+	background-position: left top no-repeat;
+	background-image: url(images/conteinerkutija.png);
+	font-size: 30px;
+	height: 66px;
+	text-transform: uppercase;
+	color: #4C4C4C;
+	padding: 25px 0 0px 30px;
+	position: absolute;
+	width: 300px;
+	margin: -80px 0 0 -30px;
+	background-repeat: no-repeat;
+}
+
+h2 span.blue {
+	color: #004B8D;
+}
+
+h3 {
+	font-size: 16px;
+	padding: 10px 0 10px 0;
+	color: #81accc;
+	text-transform: uppercase;
+	border-bottom-width: 3px;
+	font-weight: bold;
+}
+
+h3 a{
+	color: #0066CC;
+	text-decoration: none;
+}
+
+h3 a:hover{
+	color: #005AB2;
+	text-decoration: underline;
+}
+
+h3 a.str{
+	color: #005AB2;
+	background: url(images/maladesno.png) right top no-repeat;
+	padding: 0 16px 0 0;
+}
+
+h4 {
+	font-weight: bold;
+	font-size: 16px;
+	color: #4C4C4C;
+	padding: 10px 10px 10px 20px;
+}
+
+h5 {
+	font-weight: bold;
+	font-size: 15px;
+	line-height: 16px;
+	color: #4C4C4C;
+	padding: 10px 10px 5px 0px;
+}
+#menu ul {
+	background:#222222;
+	font-size:13px;
+	padding-left: 1.2em;
+	list-style:none;
+	color:#fff;
+	text-transform:uppercase;
+}
+
+#menu ul li{
+	color:#fff;
+	display:inline;
+}
+
+#menu ul li a{
+	color:#fff;
+	display:inline-block;
+	padding:10px 10px;
+	text-decoration:none;
+}
+
+#menu ul li a:hover{
+	color: #99B7D1;
+}
+
+#menu ul li.selected a{
+	color:#81accc;
+}
+
+/** search input **/
+
+::-webkit-input-placeholder { /* WebKit browsers */
+  color: #ccc;
+  font-style: italic;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: #ccc;
+  font-style: italic;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: #ccc;
+  font-style: italic;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color: #ccc !important;
+  font-style: italic;  
+}
+
+input, textarea { 
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none; 
+}
+
+#searchform {
+	display: inline;
+	width: 130px;
+/*	margin-bottom: 5px;*/
+	margin: 1px 1px 1px 1px;
+}
+
+.fieldcontainer {
+	display: inline;
+	position: relative;
+	width: 130px;
+	margin: 0 0;
+}
+
+.searchfield {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: inline;
+	width: 130px;
+	padding: 1px 1px 1px 1px;
+/*	padding-right: 5px;*/
+	background-color: #fff;
+	font-size: 100%;
+	color: #ccc;
+	border: 1px solid #7fa5c6;
+	/*  border-bottom-color: #d2e2e7;*/
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	border-radius: 1px;
+	-webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 2px #ccdbe8;
+	-moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 2px #ccdbe8;
+	box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 0 0 2px #ccdbe8;
+	-webkit-transition: all 0.4s linear;
+	-moz-transition: all 0.4s linear;
+	transition: all 0.4s linear;
+}
+
+.searchfield:focus {
+/*  width: 130px;*/
+  width: 150px;
+  color: #666;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 0 0 2px #b2c9dd;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 0 0 2px #b2c9dd;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 0 0 2px #b2c9dd;
+}
+
+#searchbtn {
+	position: absolute;
+	margin: 0px;
+	right: 5px;
+	top: -3px;
+	height: 25px;
+	width: 25px;
+	border: 0;
+	cursor: pointer;
+	zoom: 1;
+	filter: alpha(opacity=65);
+	opacity: 0.65;
+	background: transparent url('images/search_icon.png') top left no-repeat;
+	/* Icon credits to Iconfinder https://www.iconfinder.com/icons/314689/search_icon#size=24 */
+	-webkit-transition: all 0.4s linear;
+	-moz-transition: all 0.4s linear;
+	transition: all 0.4s linear;
+}
+#searchbtn:hover, #searchbtn:focus {
+	filter: alpha(opacity=90);
+	opacity: 0.9;  
+}
+.searchfield:focus + #searchbtn {
+  right: 2px; /* adjust btn position as the field expands */
+}
+
+#container {
+	border-top-style: solid;
+	border-top-color: #fff;
+	border-bottom-width: thick;
+	padding-top: 1px;
+	background-color: #F7F7FB;
+	/* [disabled]width: 900px; */
+}
+
+#sidebar {
+	padding: 8px 5px 0px 15px;
+	width: 295px;
+	float: left;
+	background-repeat: no-repeat;
+	background-position: right center no-repeat;
+	background-image: url(images/vertilinija.png);
+}
+
+#sidebar subheading {
+	font-weight: normal;
+	background: url(images/boxsidebar.png) left top no-repeat;
+	font-size: 16px;
+	color: #4C4C4C;
+	padding: 10px 40px 10px 20px;
+	width: 295px;
+}
+
+#sidebar img.featuredproducts {
+	margin:0 0 0 -5px;
+	display:block;
+}
+
+#sidebar img.ttshirt {
+	float:right;
+	margin:20px 13px 0 10px;
+}
+
+#sidebar p {
+	font-size:12px;
+	line-height:15px;	
+}
+
+#main {
+	background-repeat: no-repeat;
+	background-position: left top no-repeat;
+	font-size:12px;
+	color:#4c4c4c;
+	line-height:12px;
+	margin: 35px 0px 0px 317px;
+	padding: 50px 30px 25px 30px;
+	/* [disabled]background-image: url(images/bigbox.png); */
+}
+
+
+#main blockquote {
+	font-size: 14px;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #005AB2;
+	line-height: 18px;
+	font-weight: bold;
+	/* [disabled]text-transform: uppercase; */
+	text-align: justify;
+}
+
+#main p {
+	font-size:12px;
+	color:#4c4c4c;
+	line-height:12px;
+	padding:10px 0;
+}
+
+#main img.line {
+	padding:15px 0 5px 0px;
+}
+
+#mainbody {
+	margin: 25px 0px 0px 0px;
+	padding: 35px 30px 25px 25px;
+	float: left;
+	width: 845px;
+}
+
+#mainbody h2 {
+	font-weight: normal;
+	background-image: linear-gradient(180deg,rgba(229,237,243,1.00) 0%,rgba(76,129,175,0.50) 100%);
+	font-size: 25px;
+	height: 40px;
+	text-transform: none;
+	color: #004B8D;
+	padding-top: 15px;
+	padding-right: 30px;
+	padding-left: 30px;
+	padding-bottom: 0px;
+	position: absolute;
+	margin-top: -60px;
+	margin-right: 30px;
+	margin-left: -25px;
+	margin-bottom: 0;
+	/* [disabled]background-repeat: repeat-x; */
+	white-space: nowrap;
+	width: auto;
+}
+
+#mainbody blockquote {
+	font-size: 12px;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #005AB2;
+	line-height: 13px;
+	font-weight: normal;
+	margin-right: 10px;
+	margin-left: 10px;
+	font-style: italic;
+	text-align: justify;
+}
+
+#mainbody p {
+	font-size: 12px;
+	color: #4c4c4c;
+	line-height: 14px;
+	padding: 5px 0;
+}
+
+#mainbody img.line {
+	padding:0px 0px 0px 155px;
+}
+
+#footer {
+	background-color: #AA1124;
+	text-align: right;
+	color: #fff;
+	padding: 10px 14px;
+	clear: both;
+}
+
+#footer span {
+	float:left;	
+	color: #fff;
+}
+
+#footer span a {
+	float:inline;	
+	color:#fff;
+	text-decoration:none;
+	padding: 0px 10px 0px 5px;
+
+}
+
+#footer span a:hover {
+	float:inline;	
+	color:#fff;
+	text-decoration:underline;
+	padding: 0px 10px 0px 5px;
+}
+
+#footer date {
+	float: left;
+	font-style: italic;
+	font-size: 10px;
+	line-height: 14px;
+	margin: 0px;
+	padding: 0px 10px 0px 15px;
+}
+
+#footer ul{
+	list-style:none;
+}
+
+#footer ul li{
+	color:#fff;
+	display:inline;
+}
+
+#footer ul li a{
+	color:#fff;
+	padding:0 5px;
+}
+
+#slider {
+	padding:7px 0;
+	position:relative;
+	text-align:right;
+	clear:both;
+	color:#fff;
+}
+
+
+
+/*
+	root element for the scrollable.
+	when scrolling occurs this element stays still.
+*/
+.scrollable {
+
+	/* required settings */
+	position:relative;
+	overflow:hidden;
+	width: 450px;
+	height:72px;
+}
+
+/*
+	root element for scrollable items. Must be absolutely positioned
+	and it should have a extremely large width to accomodate scrollable items.
+	it's enough that you set the width and height for the root element and
+	not for this element.
+*/
+.scrollable .items {
+	/* this cannot be too large */
+	width:20000em;
+	position:absolute;
+	clear:both;
+	margin:-1px 0 0 0;
+}
+
+/* single scrollable item */
+.scrollable img {
+	float:left;
+	margin:0 20px 0 0;
+	background-color:#fff;
+	padding:2px;
+	cursor:pointer;
+	width:70px;
+	height:70px;
+}
+
+/* active item */
+.scrollable .active {
+	border:2px solid #ccc;
+	z-index:9999;
+	position:relative;
+	padding:0px;
+}
+
+
+/* this makes it possible to add next button beside scrollable */
+.scrollable {
+	float:left;	
+}
+
+/* prev, next, prevPage and nextPage buttons */
+a.browse {
+	background:url(images/hori_large.png) no-repeat;
+	display:block;
+	width:30px;
+	height:30px;
+	position:absolute;
+	margin:40px 10px;
+	cursor:pointer;
+	font-size:1px;
+}
+
+/* right */
+a.right 				{ background-position: 0 -30px; left: 450px; top:-25px;}
+a.right:hover 		{ background-position:-30px -30px; }
+a.right:active 	{ background-position:-60px -30px; } 
+
+
+/* left */
+a.left				{ left: 450px; top:10px; } 
+a.left:hover  		{ background-position:-30px 0; }
+a.left:active  	{ background-position:-60px 0; }
+
+/* up and down */
+a.up, a.down		{ 
+	background:url(https://trauma.massey.ac.nz/images/vert_large.png) no-repeat; 
+	float: none;
+	margin: 10px 50px;
+}
+
+/* up */
+a.up:hover  		{ background-position:-30px 0; }
+a.up:active  		{ background-position:-60px 0; }
+
+/* down */
+a.down 				{ background-position: 0 -30px; }
+a.down:hover  		{ background-position:-30px -30px; }
+a.down:active  	{ background-position:-60px -30px; } 
+
+
+/* disabled navigational button */
+a.disabled {
+	visibility:hidden !important;		
+} 	
+#wrapper #content #container #mainbody p .line {
+}

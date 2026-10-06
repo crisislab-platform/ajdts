@@ -1,0 +1,48 @@
+/* CRISiSLab overrides for the archived AJDTS stylesheet.
+   The original site is a fixed 938px layout that floats on a background image
+   carrying the Massey masthead. This trims the dead space below the footer so
+   the page sits comfortably inside an embedded frame on crisislab.org.nz, and
+   styles the hosting notice. */
+
+#content {
+	margin: 120px 0 40px 0;   /* 120px top keeps the Massey masthead in the
+	                             background image visible, as on the original */
+}
+
+#wrapper {
+	max-width: 938px;
+}
+
+#crisislab-notice {
+	background: #eef4f9;
+	border: 1px solid #c3d6e5;
+	border-left: 4px solid #004B8D;
+	margin: 0 0 12px 0;
+	padding: 12px 18px;
+}
+
+#crisislab-notice p {
+	font-size: 12px;
+	line-height: 17px;
+	color: #3d4b57;
+	margin: 0;
+	padding: 0;
+}
+
+#crisislab-notice strong {
+	color: #004B8D;
+}
+
+#crisislab-notice a {
+	color: #005AB2;
+}
+
+/* The archived stylesheet gives PDF links no affordance; flag the papers served
+   from here as downloads. */
+#mainbody h5 a.pdf:after {
+	content: " (PDF)";
+	font-size: 11px;
+	font-weight: normal;
+	color: #6b7b88;
+	white-space: nowrap;
+}
