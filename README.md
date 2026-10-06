@@ -137,6 +137,45 @@ download, the PDF opens in its own tab rather than inside the embed.
 If a true `Content-Disposition` header is ever wanted, that means moving off
 GitHub Pages — Cloudflare Pages and Netlify both support a `_headers` file.
 
+### Downloads must live outside the embed
+
+Wix renders the embed inside a sandboxed iframe:
+
+```
+sandbox="allow-same-origin allow-forms allow-popups
+         allow-modals allow-scripts allow-pointer-lock"
+```
+
+`allow-downloads`, `allow-top-navigation` and `allow-popups-to-escape-sandbox`
+are all absent, so **nothing inside the embed can trigger a download** — not the
+`download` attribute, not a server `Content-Disposition`, and not via a new tab
+(popups inherit the sandbox). Clicking a paper inside the embed opens it in the
+browser's PDF viewer, and that cannot be changed from this side.
+
+So the Volume 29 PDFs were also imported into the site's Wix Media Manager, and
+the download links belong on the Wix page itself, above the embed. Wix forces a
+download when `?dn=<filename>` is appended:
+
+| Paper | URL |
+|---|---|
+| Complete issue | `https://www.crisislab.org.nz/_files/ugd/c74a14_0f84bfcbe093446ca8d546fb79634a6a.pdf?dn=AJDTS_29_1_full.pdf` |
+| Woods et al. | `https://www.crisislab.org.nz/_files/ugd/c74a14_9b5f0a6a11274ae09327ae00a1bbeecf.pdf?dn=AJDTS_29_1_Woods.pdf` |
+| Pierce | `https://www.crisislab.org.nz/_files/ugd/c74a14_7ee7554fe9a14d4fb4ff9ab4df5d32bd.pdf?dn=AJDTS_29_1_Pierce.pdf` |
+| Lycos et al. | `https://www.crisislab.org.nz/_files/ugd/c74a14_5eeea131b1b147ef8e3f25629d1d9d5b.pdf?dn=AJDTS_29_1_Lycos.pdf` |
+
+All four verified returning `content-disposition: attachment` with byte-exact
+sizes. Without `?dn=` the same URLs open in the viewer instead.
+
+Note this means each paper now exists twice: in this repo (served by GitHub
+Pages, inside the embed) and in Wix Media Manager (for the download links). A
+corrected paper has to be replaced in both. Re-import to Wix with:
+
+```
+POST https://www.wixapis.com/site-media/v1/files/import
+{"url": "<public URL>", "displayName": "...", "mimeType": "application/pdf",
+ "mediaType": "DOCUMENT", "private": false}
+```
+
 ### Why the height is fixed
 
 Every page posts its scroll height to the parent (`{ ajdtsHeight: ... }`, see
