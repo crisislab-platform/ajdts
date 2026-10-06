@@ -68,8 +68,9 @@ Everything below is done by `build.py`, so it survives a rebuild:
 - **Previous Issues** gained a 2024 row and a Volume 28 section, lifted from the
   original Current Issue page.
 - **Home page** sidebar now leads with Volume 29.
-- **Hosting notice** on every page explaining the archive and naming CRISiSLab
-  as the host.
+- **Hosting credit** in the footer only — "Hosted by CRISiSLab", with the
+  domain linking to the archived Massey site. There is deliberately no banner
+  on the pages: the journal should read as the journal.
 - **Search box** repaired. The original posted to `google.com/custom` with a
   sitesearch for `www.massey.ac.nz/~trauma`, a domain that has 404'd for years.
   It now runs a Google `site:` search against the archive.

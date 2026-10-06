@@ -121,24 +121,8 @@ def open_external_in_new_tab(markup):
 
 
 # --------------------------------------------------------------------------
-# chrome: notice banner, stylesheet, working search box
+# chrome: stylesheet, working search box, footer credit
 # --------------------------------------------------------------------------
-
-def notice(depth):
-    """depth = number of '../' steps back to the site root."""
-    up = "../" * depth
-    return """
-        <div id="crisislab-notice">
-          <p><strong>A note on this site.</strong> The <em>Australasian Journal of Disaster and
-          Trauma Studies</em> website hosted by Massey University&rsquo;s School of Psychology has been
-          archived. <a href="{crisislab}">CRISiSLab</a> is hosting this temporary mirror so that
-          <a href="{up}issues/current.html">{label}</a> can be published and downloaded.
-          Every issue up to and including Volume 28, Number 1 is still served from the
-          <a href="{archive}/">archived Massey site</a>, and the links on the
-          <a href="{up}issues/previous.html">Previous Issues</a> page will take you there.</p>
-        </div>
-""".format(crisislab=CRISISLAB, archive=ARCHIVE, up=up, label=html.escape(CURRENT["label"]))
-
 
 FOOTER_DOMAIN = re.compile(
     r'<span><a href="(?:\.\./)*index\.html">trauma\.massey\.ac\.nz</a></span>')
@@ -190,14 +174,12 @@ STYLE_LINK = re.compile(r'(<link rel="stylesheet" type="text/css" href=")([^"]*s
 
 
 def add_chrome(markup, page):
-    depth = page.count("/")
-    up = "../" * depth
+    up = "../" * page.count("/")
     markup = STYLE_LINK.sub(
         lambda m: m.group(0) + '\n<link rel="stylesheet" type="text/css" href="%scrisislab.css" />' % up,
         markup, count=1)
     markup = SEARCH_FORM.sub(lambda m: NEW_SEARCH_FORM, markup, count=1)
     markup = fix_footer(markup)
-    markup = markup.replace('<div id="container">', notice(depth) + '\n       <div id="container">', 1)
     markup = markup.replace("</body>", EMBED_JS + "</body>", 1)
     return markup
 
@@ -258,7 +240,7 @@ def current_issue_body(issue):
     return """<h2>Current Issue</h2>
             <h3><a href="{d}/contents.htm">{label}{sub}</a></h3>
             <h5>Published: {published}</h5>
-            <p>The authors, titles and keywords of papers published in this issue are listed below with the title linked to each paper in PDF format. These papers are hosted by CRISiSLab and download directly from this site.</p>
+            <p>The authors, titles and keywords of papers published in this issue are listed below with the title linked to each paper in PDF format.</p>
             <p>A full listing of this issue's papers including abstracts can be found in the <strong><a href="{d}/contents.htm">Contents Pages</a>.</strong></p>
             <hr width="70%" />
             <p>&nbsp;</p>
@@ -308,17 +290,16 @@ def home_sidebar(issue):
         	</subheading>
    	      <h3>Latest issue: Published {published}</h3>
    	      <p><a href="issues/current.html">{label}</a></p>
-   	      <p>The newest issue of <em>AJDTS</em>, published by CRISiSLab following the
-   	      archiving of the journal&rsquo;s Massey University website. It includes research on
-   	      post-earthquake treatment seeking in Canterbury, climate change education in
-   	      Vanuatu, and children&rsquo;s experiences of the 2019/2020 South Australian bushfires.
+   	      <p>This issue includes research on treatment seeking in the years after the
+   	      Canterbury earthquake sequence, climate change education in Vanuatu, and
+   	      children&rsquo;s experiences of the 2019/2020 South Australian bushfires.
    	      <a href="issues/current.html">Download the papers</a>.</p>
             <p><img src="images/linija.png" alt="" class="line" border="0" /></p>
             <p>&nbsp;</p>
             <p><a href="issues/previous.html#Vol28-1">Volume 28, Number 1</a><br />
             A special issue in tribute to <em>Australasian Journal of Disaster and Trauma
             Studies</em> founder Professor Douglas Paton, with a focus on community resilience
-            and disaster risk reduction. Hosted on the archived Massey site.</p>
+            and disaster risk reduction.</p>
             <p>&nbsp;</p>""".format(published=issue["published"], label=issue["label"])
 
 
@@ -362,8 +343,7 @@ def vol28_section(original_current):
 OVERRIDE_CSS = """/* CRISiSLab overrides for the archived AJDTS stylesheet.
    The original site is a fixed 938px layout that floats on a background image
    carrying the Massey masthead. This trims the dead space below the footer so
-   the page sits comfortably inside an embedded frame on crisislab.org.nz, and
-   styles the hosting notice. */
+   the page sits comfortably inside an embedded frame on crisislab.org.nz. */
 
 #content {
 	margin: 120px 0 40px 0;   /* 120px top keeps the Massey masthead in the
@@ -372,30 +352,6 @@ OVERRIDE_CSS = """/* CRISiSLab overrides for the archived AJDTS stylesheet.
 
 #wrapper {
 	max-width: 938px;
-}
-
-#crisislab-notice {
-	background: #eef4f9;
-	border: 1px solid #c3d6e5;
-	border-left: 4px solid #004B8D;
-	margin: 0 0 12px 0;
-	padding: 12px 18px;
-}
-
-#crisislab-notice p {
-	font-size: 12px;
-	line-height: 17px;
-	color: #3d4b57;
-	margin: 0;
-	padding: 0;
-}
-
-#crisislab-notice strong {
-	color: #004B8D;
-}
-
-#crisislab-notice a {
-	color: #005AB2;
 }
 
 /* The archived stylesheet gives PDF links no affordance; flag the papers served
