@@ -158,38 +158,39 @@ Two things that are easy to get wrong when editing this:
   the iframe swallows the click. Select it via the *Layers* panel instead
   (Section: Untitled -> HTML).
 
-### The mobile layout of the embed is set separately, and is still wrong
+### The mobile layout of the embed is a separate set of coordinates
 
-Wix keeps a second set of coordinates for the mobile view, and the embed never
-got one. Checked on 7 October 2026 by fetching
-`https://www.crisislab.org.nz/ajdts-journal` with an iPhone user agent and
-reading the server-rendered CSS:
+Wix keeps desktop and mobile coordinates for every component, and the mobile
+ones have to be set by hand — a change on desktop does nothing to them. The
+embed shipped at **280 x 332** in a **320 x 402** section, which meant a phone
+got the entire journal through a 332px letterbox that scrolled internally. The
+journal home page is 2036px tall at 280px wide.
 
-```
-#comp-muvy1ext { width: 280px; height: 332px; }     /* the embed   */
-#comp-muvy06ww { width: 320px; }                    /* its section */
-```
+Fixed on 7 October 2026 and published:
 
-280px wide is fine — the site is responsive down to 280 — but **332px tall is
-not**. The journal home page is 2036px tall at that width, so a phone gets the
-whole site inside a 332px letterbox that scrolls internally. That is what makes
-the page feel broken on a phone, and no amount of CSS inside the iframe can fix
-it: the height is the host page's decision.
-
-It has to be set by hand in the Wix editor's **mobile view** (the phone icon in
-the top bar), selecting the component via *Layers*:
-
-| | Now | Should be |
+| | Was | Now |
 |---|---|---|
-| Component | 280 x 332 at X 20 | 320 x 1860 at X 0 |
-| Section | 320 x ~390 | 320 x 1960 |
+| Component `comp-muvy1ext` | 280 x 332 at X 20 | **280 x 2050** at X 20 |
+| Section `comp-muvy06ww` | 320 x 402 | **320 x 2130** |
 
-1860px is the home page's height at 320px wide, measured in a 320px frame, the
-same way the desktop 1163px was chosen. Keep the section taller than the
-component or the site footer renders over the bottom of the embed, exactly as
-it did on desktop. Deeper pages (Current Issue, and especially the Previous
-Issues index at ~77,000px) still scroll inside the frame, which is the same
-trade the desktop embed makes.
+2050 is the home page's height at 280px wide plus a little slack, chosen the
+same way the desktop 1163px was. 2130 leaves the embed 60px of clearance
+before the site footer. The 20px gutters were left alone — the journal reads
+fine at 280 and the gutters match the rest of the mobile page.
+
+Three things to know before editing this again:
+
+- **Turn on Tools -> Toolbar.** It gives numeric W/H/X/Y fields. These heights
+  are several screens tall, so dragging the resize handles is not realistic.
+- **Select the embed from *Layers*** (Page -> Section: Untitled -> HTML).
+  Clicking it on the canvas selects the section, because the iframe swallows
+  the click.
+- **Growing the component does not grow its section.** Set the section height
+  yourself, or the site footer renders over the bottom of the embed.
+
+Deeper journal pages still scroll inside the frame — About is 3055px at this
+width and the Previous Issues index is about 86,000px — which is the same
+trade the desktop embed makes. The Velo auto-resize below would remove it.
 
 ### PDF links download rather than open
 
