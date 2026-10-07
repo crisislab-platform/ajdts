@@ -249,22 +249,43 @@ POST https://www.wixapis.com/site-media/v1/files/import
  "mediaType": "DOCUMENT", "private": false}
 ```
 
-### Why the height is fixed
+### Why the height is fixed — and why it need not be
 
 Every page posts its scroll height to the parent (`{ ajdtsHeight: ... }`, see
 `EMBED_JS` in build.py), so a Velo `onMessage` handler could resize the
-component to fit each page. That is deliberately **not** wired up: this is the
-classic Wix Editor, where elements are absolutely positioned and the page does
-not reflow when a component's height changes at runtime. Growing the component
-would slide it under the footer rather than push the footer down.
+component to fit each page. That was not wired up, on the understanding that
+the classic Editor positions elements absolutely and does not reflow when a
+component's height changes at runtime — a taller embed would slide under the
+footer instead of pushing it down.
 
-So the embed is a fixed 1163px and taller pages scroll inside it. 1163px fits
-the journal's home page exactly, footer and all. The Current Issue page and the
-very long Previous Issues index scroll internally, which is normal behaviour for
-an embedded site.
+**That turns out not to be true of this page.** Measured on the live page on
+7 October 2026: the section's grid container is `height: auto` with
+`min-height: 1620px`, and its content is 166 + 1163 + 10 = 1339px, so it is
+carrying 281px of slack. Growing `#comp-muvy1ext` from 1163px to 2400px
+(+1237px) moved the footer down by exactly 1237 - 281 = **956px**, and the
+document grew by the same 956px. The page reflows 1:1 once the slack is used
+up. On mobile the same container has `min-height: auto`, so it would reflow
+immediately.
 
-The postMessage is left in place because it costs nothing and becomes useful if
-the site ever moves to Wix Studio, where sections do reflow.
+So the Velo auto-resize is live-able, and it is the better fix: one handler and
+the embed fits every page at every width, instead of a height that is only
+right for the home page. Something like, in the page's Velo code:
+
+```js
+$w.onReady(() => {
+  $w('#html1').onMessage((e) => {
+    if (e.data && e.data.ajdtsHeight) {
+      $w('#html1').height = e.data.ajdtsHeight + 20;
+    }
+  });
+});
+```
+
+(`#html1` is whatever Velo names `comp-muvy1ext`; check it in Dev Mode. Clamp
+it if you want — the Previous Issues index is ~77,000px tall on a phone.)
+
+Until that is done the embed is a fixed 1163px on desktop and taller pages
+scroll inside it. 1163px fits the journal's home page exactly, footer and all.
 
 ## Known issues
 
