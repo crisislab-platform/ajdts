@@ -22,7 +22,7 @@ original/     pristine mirror of the Massey site — never edited, the build inp
 new-issue/    PDFs for issues CRISiSLab hosts itself, one folder per issue
 issues.py     metadata (titles, authors, keywords, abstracts) for those issues
 build.py      generates site/ from the three above
-site/         the deployable static site — 43 files, 5.6 MB. Do not hand-edit.
+site/         the deployable static site — 44 files, 5.6 MB. Do not hand-edit.
 ```
 
 Rebuild with:
@@ -79,8 +79,47 @@ Everything below is done by `build.py`, so it survives a rebuild:
 - **Two broken links in the original** were repaired: `info/copyright.html`
   (the file is `copyright.htm`) and a commented-out `contact.html` that never
   existed beside the pages referencing it.
+- **Made responsive.** The original is a 938px fixed design from about 2012
+  with no viewport meta, so a phone rendered it at 980px and zoomed out to a
+  postage stamp. `build.py` now injects
+  `<meta name="viewport" content="width=device-width, initial-scale=1">` into
+  every page and `crisislab.css` adds the media queries. See below.
 - **`crisislab.css`** — a small override layer. The original stylesheet is
   untouched.
+
+### The responsive layer
+
+Three breakpoints, all in `OVERRIDE_CSS` in `build.py`:
+
+| Width | What changes |
+|---|---|
+| **≤ 938px** (the design width) | Layout goes fluid; the menu wraps and the search box takes its own row; long bare URLs on the Web Links page break instead of pushing the page sideways |
+| **≤ 760px** | The home page's sidebar and article stack; the heading boxes rejoin the flow; body copy goes to 14px/1.55 |
+| **≤ 560px** | The year/volume index and the editorial board stack into lists; the masthead stops shrinking |
+
+Three things in the original fought back and are worth knowing about:
+
+- **The masthead is a background image.** `images/background-ajdts.jpg` is
+  1694px wide and the Massey logo and the Ruapehu photo are positioned for a
+  938px band cropped out of its centre — the page just leaves 120px of margin
+  above itself to let them show. Left alone, a phone crops that band to the
+  middle 375px and the Massey logo disappears. Below 938px the image is scaled
+  to 180.6% of the viewport (1694/938) so the band always matches the page
+  width, with the top margin scaled to match at 12.8% (120/938). Below 560px
+  even that makes the logo illegible, so the image is pinned at 1186px and
+  anchored at `30% top`: the logo stays readable top left and the photo crops
+  off the right instead.
+- **The headings are absolutely positioned.** `h2` and `#mainbody h2` are boxes
+  with negative margins that hang up and left out of the content, and
+  `#mainbody h2` is `white-space: nowrap` on top of that. In a fluid column
+  they either overflow the page or land on the text, so below 760px they go
+  back to `position: static` and are allowed to wrap.
+- **Layout tables are padded with `&nbsp;` cells.** Invisible as table cells,
+  but blank lines once the table is stacked. `mark_filler_cells()` tags them
+  `class="empty"` at build time so the stacked view can drop them.
+
+Nothing above 938px changed: the embed is 980px wide, so the Wix desktop view
+renders exactly as it did before.
 
 ## Deployment
 
@@ -118,6 +157,39 @@ Two things that are easy to get wrong when editing this:
 - **Clicking the embed in the editor selects the section, not the component** —
   the iframe swallows the click. Select it via the *Layers* panel instead
   (Section: Untitled -> HTML).
+
+### The mobile layout of the embed is set separately, and is still wrong
+
+Wix keeps a second set of coordinates for the mobile view, and the embed never
+got one. Checked on 7 October 2026 by fetching
+`https://www.crisislab.org.nz/ajdts-journal` with an iPhone user agent and
+reading the server-rendered CSS:
+
+```
+#comp-muvy1ext { width: 280px; height: 332px; }     /* the embed   */
+#comp-muvy06ww { width: 320px; }                    /* its section */
+```
+
+280px wide is fine — the site is responsive down to 280 — but **332px tall is
+not**. The journal home page is 2036px tall at that width, so a phone gets the
+whole site inside a 332px letterbox that scrolls internally. That is what makes
+the page feel broken on a phone, and no amount of CSS inside the iframe can fix
+it: the height is the host page's decision.
+
+It has to be set by hand in the Wix editor's **mobile view** (the phone icon in
+the top bar), selecting the component via *Layers*:
+
+| | Now | Should be |
+|---|---|---|
+| Component | 280 x 332 at X 20 | 320 x 1860 at X 0 |
+| Section | 320 x ~390 | 320 x 1960 |
+
+1860px is the home page's height at 320px wide, measured in a 320px frame, the
+same way the desktop 1163px was chosen. Keep the section taller than the
+component or the site footer renders over the bottom of the embed, exactly as
+it did on desktop. Deeper pages (Current Issue, and especially the Previous
+Issues index at ~77,000px) still scroll inside the frame, which is the same
+trade the desktop embed makes.
 
 ### PDF links download rather than open
 

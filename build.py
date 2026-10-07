@@ -172,14 +172,31 @@ EMBED_JS = """<script>
 
 STYLE_LINK = re.compile(r'(<link rel="stylesheet" type="text/css" href=")([^"]*style\.css)(" ?/?>)', re.I)
 
+# The original predates responsive design and carries no viewport meta, so a
+# phone renders it at 980px and zooms out. crisislab.css does the rest.
+VIEWPORT = '<meta name="viewport" content="width=device-width, initial-scale=1" />'
+
+# The year/volume index and the editorial board are laid out with tables padded
+# out by &nbsp; cells. Those cells are invisible as table cells but become
+# blank lines once crisislab.css stacks the table on a narrow screen, so tag
+# them to be hidden there.
+FILLER_CELL = re.compile(r'<td([^>]*)>(\s*&nbsp;\s*)</td>', re.I)
+
+
+def mark_filler_cells(markup):
+    return FILLER_CELL.sub(
+        lambda m: '<td class="empty"%s>%s</td>' % (m.group(1), m.group(2)), markup)
+
 
 def add_chrome(markup, page):
     up = "../" * page.count("/")
+    markup = markup.replace("<head>", "<head>\n" + VIEWPORT, 1)
     markup = STYLE_LINK.sub(
         lambda m: m.group(0) + '\n<link rel="stylesheet" type="text/css" href="%scrisislab.css" />' % up,
         markup, count=1)
     markup = SEARCH_FORM.sub(lambda m: NEW_SEARCH_FORM, markup, count=1)
     markup = fix_footer(markup)
+    markup = mark_filler_cells(markup)
     markup = markup.replace("</body>", EMBED_JS + "</body>", 1)
     return markup
 
@@ -343,7 +360,13 @@ def vol28_section(original_current):
 OVERRIDE_CSS = """/* CRISiSLab overrides for the archived AJDTS stylesheet.
    The original site is a fixed 938px layout that floats on a background image
    carrying the Massey masthead. This trims the dead space below the footer so
-   the page sits comfortably inside an embedded frame on crisislab.org.nz. */
+   the page sits comfortably inside an embedded frame on crisislab.org.nz, and
+   adds the responsive layer the original never had. */
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
 
 #content {
 	margin: 120px 0 40px 0;   /* 120px top keeps the Massey masthead in the
@@ -351,7 +374,8 @@ OVERRIDE_CSS = """/* CRISiSLab overrides for the archived AJDTS stylesheet.
 }
 
 #wrapper {
-	max-width: 938px;
+	width: auto;
+	max-width: 938px;         /* the design width; fluid below it */
 }
 
 /* The archived stylesheet gives PDF links no affordance; flag the papers served
@@ -362,6 +386,230 @@ OVERRIDE_CSS = """/* CRISiSLab overrides for the archived AJDTS stylesheet.
 	font-weight: normal;
 	color: #6b7b88;
 	white-space: nowrap;
+}
+
+/* =====================================================================
+   Responsive layer
+
+   The original is a 938px fixed design from ~2012: no viewport meta, two
+   floated columns, headings positioned absolutely so their boxes hang out
+   over the content, and a 1694px background image whose only job is to put
+   the Massey masthead above the page. None of it survives a phone, so:
+
+     <= 938px   the layout goes fluid and the background scales with it
+     <= 760px   the two columns stack and the heading boxes rejoin the flow
+     <= 560px   index tables stack into lists
+   ===================================================================== */
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+@media (max-width: 938px) {
+	/* the 0.4em the reset hands every element, including these two */
+	html, body { margin: 0; }
+
+	/* The masthead lives in the background image: the Massey logo and the
+	   Ruapehu photo are placed for a 938px band cropped out of a 1694px
+	   image (938/1694 = 55.4%, hence 180.6%). Scaling the image to that
+	   same ratio of the viewport keeps both in the same place at any width,
+	   and 12.8% (120/938) keeps the content box under them. */
+	body { background-size: 180.6% auto; }
+
+	#content {
+		width: auto;
+		margin: 12.8% 0 24px 0;
+		padding: 10px;
+	}
+
+	#mainbody {
+		width: auto;
+		float: none;
+		padding: 35px 18px 25px 18px;
+	}
+
+	#mainbody img.line { padding-left: 0; }   /* was indented 155px */
+
+	table { max-width: 100%; }
+
+	/* The Web Links page prints bare URLs as text and several are wider than
+	   a phone, which pushes the whole page sideways. */
+	#main, #mainbody, #sidebar, td, th { overflow-wrap: break-word; }
+
+	#header { padding: 12px 10px; }
+
+	/* The menu runs out of room at exactly the design width, so from here
+	   down let the items wrap over as many rows as they need and give the
+	   search box its own row instead of squeezing it onto the end. */
+	#menu ul { padding: 2px 4px; }
+	#menu ul li { display: inline-block; }
+	#menu ul li a { padding: 9px 6px; }
+
+	/* the search sits in the last <li>; give it a row to itself */
+	#menu ul li:has(#searchform) { display: block; }
+
+	/* The submit button is positioned against .fieldcontainer, so the width
+	   cap belongs there rather than on the input. */
+	#searchform,
+	#searchform .fieldcontainer {
+		display: block;
+		width: auto;
+		max-width: 320px;
+		margin: 4px 2px 6px 2px;
+	}
+
+	.searchfield,
+	.searchfield:focus {
+		width: 100%;
+		font-size: 16px;          /* under 16px iOS zooms the page on focus */
+		padding: 7px 32px 7px 7px;
+	}
+
+	#searchbtn {
+		top: 50%;
+		right: 5px;
+		margin-top: -12px;
+	}
+}
+
+@media (max-width: 760px) {
+	h1 {
+		font-size: 24px;
+		line-height: 1.15;
+	}
+
+	/* Home page: sidebar above the article instead of beside it. */
+	#sidebar {
+		width: auto;
+		float: none;
+		background-image: none;   /* the vertical rule between the columns */
+		border-bottom: 3px solid #e5edf3;
+		padding: 8px 10px 12px 10px;
+	}
+
+	#sidebar subheading {
+		display: inline-block;
+		width: auto;
+	}
+
+	#main {
+		margin: 0;
+		padding: 14px 10px 20px 10px;
+	}
+
+	#mainbody { padding: 14px 12px 20px 12px; }
+
+	/* The heading boxes are absolutely positioned with negative margins so
+	   they overhang the content above them. In a fluid column that either
+	   overflows the page or lands on top of the text, so put them back in
+	   the flow and let them wrap. */
+	h2,
+	#mainbody h2 {
+		position: static;
+		width: auto;
+		height: auto;
+		margin: 0 0 14px 0;
+		padding: 11px 14px;
+		background-image: linear-gradient(180deg, rgba(229,237,243,1) 0%, rgba(76,129,175,0.5) 100%);
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		font-size: 21px;
+		line-height: 1.2;
+		white-space: normal;
+		color: #004B8D;
+	}
+
+	/* The original sets line-height equal to font-size, which is unreadable
+	   on a phone-width measure. */
+	#main p,
+	#mainbody p,
+	#sidebar p,
+	#mainbody li,
+	#mainbody dd,
+	#mainbody dt {
+		font-size: 14px;
+		line-height: 1.55;
+	}
+
+	#main blockquote,
+	#mainbody blockquote {
+		font-size: 14px;
+		line-height: 1.5;
+		text-align: left;         /* justified text rivers at this measure */
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	#mainbody h5 { line-height: 1.35; }
+	#mainbody h4 { padding-left: 0; }
+	h3 { line-height: 1.3; }
+
+	/* Thumbnail strip: fluid, with the two arrows parked on the right. */
+	#slider { text-align: left; }
+
+	.scrollable {
+		width: calc(100% - 46px);
+		float: left;
+	}
+
+	a.browse,
+	a.left,
+	a.right {
+		left: auto;
+		right: 0;
+		margin: 40px 4px;
+	}
+
+	/* Footer: let the three credits and the menu wrap instead of fighting
+	   each other across one line. */
+	#footer { text-align: left; }
+
+	#footer span,
+	#footer date {
+		float: none;
+		display: inline-block;
+	}
+
+	#footer date { padding: 0 10px 0 0; }
+	#footer ul { padding: 4px 0 0 0; }
+	#footer ul li a { padding: 0 5px 0 0; }
+}
+
+@media (max-width: 560px) {
+	/* Below this the proportional masthead above shrinks the Massey logo to
+	   about 100px and it stops being readable. Pin the image at a size that
+	   keeps the logo legible, anchored so the logo sits top left, and let
+	   the Ruapehu photo crop off the right edge instead. */
+	body {
+		background-size: 1186px auto;
+		background-position: 30% top;
+	}
+
+	#content { margin-top: 84px; }
+
+	h1 { font-size: 20px; }
+
+	h2,
+	#mainbody h2 { font-size: 19px; }
+
+	/* The year/volume index and the editorial board are layout tables. Stack
+	   them into lists; build.py tags the filler cells so they can go. */
+	#mainbody table,
+	#mainbody tbody,
+	#mainbody tr,
+	#mainbody td {
+		display: block;
+		width: auto;
+	}
+
+	#mainbody tr {
+		padding: 4px 0 8px 0;
+		border-bottom: 1px solid #dfe6ec;
+	}
+
+	#mainbody td { padding: 2px 0; }
+	#mainbody td.empty { display: none; }
 }
 """
 
